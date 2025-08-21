@@ -6,11 +6,9 @@ void kmain() {
     clear_screen();
     print("BOOT....\n");
     init_idt();
-    print_int(132);
     print("\n");
 
-    int x = 1/0;
-    (void)x;
+    asm volatile("int $0");
 
     while(1) {}
 }

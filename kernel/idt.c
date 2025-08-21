@@ -13,7 +13,8 @@ void set_idt_gate(uint8_t num, uint32_t handler, uint16_t sel, uint8_t flags) {
 }
 
 extern void idt_flush(uint32_t);
-extern void isr0();
+extern uint32_t (*isr_table[33]);
+
 
 void init_idt(void) {
     idtp.limit = sizeof(idt) - 1;
@@ -23,7 +24,9 @@ void init_idt(void) {
         set_idt_gate(i, 0, 0x08, 0x8E);
     }
 
-    set_idt_gate(0, (uint32_t)isr0, 0x08, 0x8E);
+    for (int v = 0; v < 33; v++) {
+        set_idt_gate(v, (uint32_t)isr_table[v], 0x08, 0x8E);
+    }
 
     idt_flush((uint32_t)&idtp);
 }

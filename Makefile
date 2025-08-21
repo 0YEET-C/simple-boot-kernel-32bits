@@ -11,7 +11,7 @@ all: clean
 
 	i686-elf-ld -T linker.ld -nostdlib -o stage2.elf stage2.o main.o vga.o idt.o idt_flush.o isr.o isr_handler.o
 	i686-elf-objcopy -O binary stage2.elf stage2.bin
-	truncate -s 2048 stage2.bin
+	truncate -s 10240 stage2.bin
 
 	cat stage1.bin stage2.bin > test.bin
 
