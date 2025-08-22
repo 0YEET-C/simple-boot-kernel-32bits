@@ -2,15 +2,15 @@
 Real Mode → Enable A20 → Load Kernel → Setup GDT → Protected Mode → Jump to Stage2
 
 ### BOOT STSGE1
-start at 16bits at 0x7c00
+- start at 16bits at 0x7c00
 ```bash
 cli
 xor ax, ax
 mov es, ax
 mov ds, ax
 ```
-Disable interrupts(cli)to safely configure CPU
-Initialize segment registers (ds, es) to 0
+- Disable interrupts(cli)to safely configure CPU
+- Initialize segment registers (ds, es) to 0
 
 # Enable A20 line
 ```bash
@@ -20,9 +20,9 @@ ea_A20:
     out 0x92,al
     ret
 ```
-use port 0x92 for easy to Enable A20
-A20 line enables memory >1MB
-for Enable use some 32bits regis
+- use port 0x92 for easy to Enable A20
+- A20 line enables memory >1MB
+- for Enable use some 32bits regis
 
 # Load Stage2 from Disk
 ```bash
@@ -39,9 +39,9 @@ for Enable use some 32bits regis
     int 0x13
     jc fail
 ```
-Uses BIOS interrupt int 0x13 to read sectors 
-Uses BIOS interrupt 0x13 to load stage 2 at memory 0x80000
-If disk read fails, jump to fail: → CPU halt
+- Uses BIOS interrupt int 0x13 to read sectors 
+- Uses BIOS interrupt 0x13 to load stage 2 at memory 0x80000
+- If disk read fails, jump to fail: → CPU halt
 
 # Setup GDT
 ```bash 
@@ -55,8 +55,8 @@ gdt_des:
     dw gdt_end - gdt_start - 1
     dd gdt_start
 ```
-0x08 -> code_seg 0x10-> data_seg 
-use (lgdt [des]) for lode gdt
+- 0x08 -> code_seg 0x10-> data_seg 
+- use (lgdt [des]) for lode gdt
 
 # Enter Protected Mode
 ```bash 
@@ -66,8 +66,8 @@ use (lgdt [des]) for lode gdt
 
     jmp 0x08:pm_mode_start
 ```
-Set PE bit in cr0 to enable protected mode
-Far jump to pm_mode_start (32-bit code)
+- Set PE bit in cr0 to enable protected mode
+- Far jump to pm_mode_start (32-bit code)
 
 # Protected Mode Initialization
 ```bash
@@ -81,9 +81,9 @@ mov esp,0x9FF00
 
 jmp 0x08:0x80000
 ```
-Set 32-bit segment registers to code seg 
-Initialize stack for kernel execution
-Jump to kernel entry at 0x80000
+- Set 32-bit segment registers to code seg 
+- Initialize stack for kernel execution
+- Jump to kernel entry at 0x80000
 
 # Fail
 ```bash
@@ -91,5 +91,5 @@ fail:
     hlt
     jmp $
 ```
-hlt stops the CPU until an interrupt occurs 
-jmp $ loops indefinitely to prevent undefined behavior
+- hlt stops the CPU until an interrupt occurs 
+- jmp $ loops indefinitely to prevent undefined behavior
