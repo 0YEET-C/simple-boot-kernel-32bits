@@ -1,4 +1,4 @@
-#include "idt.h"
+#include "include/idt.h"
 #include <stdint.h>
 
 struct idt_entry idt[256];
@@ -14,6 +14,7 @@ void set_idt_gate(uint8_t num, uint32_t handler, uint16_t sel, uint8_t flags) {
 
 extern void idt_flush(uint32_t);
 extern uint32_t (*isr_table[32]);
+extern uint32_t (*irq_table[16]);
 
 
 void init_idt(void) {
@@ -28,5 +29,8 @@ void init_idt(void) {
         set_idt_gate(v, (uint32_t)isr_table[v], 0x08, 0x8E);
     }
 
+    for (int q = 0; q < 16; q++) {
+        set_idt_gate(32 + q, (uint32_t)irq_table[q], 0x08, 0x8E);
+    }
     idt_flush((uint32_t)&idtp);
 }
