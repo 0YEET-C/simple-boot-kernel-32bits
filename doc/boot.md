@@ -1,5 +1,5 @@
 # flow
-Real Mode → Enable A20 → Load Kernel → Setup GDT → Protected Mode → Jump to Stage2
+Real Mode → Enable A20 → Load Kernel → Setup GDT → Protected Mode → Jump to Stage2 → Call kernel
 
 # BOOT STSGE1
 - start at 16bits at 0x7c00
@@ -84,6 +84,31 @@ jmp 0x08:0x80000
 - Set 32-bit segment registers to code seg 
 - Initialize stack for kernel execution
 - Jump to stage2 entry at 0x80000
+
+## Stage2
+```bash
+global stage2_start
+
+stage2_start:
+    mov ax,0x10
+    mov es,ax
+    mov ds,ax
+    mov fs,ax
+    mov gs,ax
+    mov ss,ax
+    mov esp,0x200000
+```
+- global for start 
+- change stack to 0x200000 to make sure 
+
+## Call Kernel Main
+```bash
+extern kmain
+
+call kmain
+```
+- extern for tell kmain not in this file 
+- use call to go to main 
 
 ## Fail
 ```bash
