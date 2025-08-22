@@ -26,6 +26,7 @@ MyOS is **cross-compiled** from scratch using:
 All components are compiled manually, without relying on prebuilt kernels.
 
 ### Build Steps
+for full compiled in Makefile
 ```bash
 # Assemble bootloader
 nasm -f bin boot/stage1.nasm -o stage1.bin
