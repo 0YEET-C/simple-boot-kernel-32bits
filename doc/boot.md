@@ -83,7 +83,7 @@ jmp 0x08:0x80000
 ```
 - Set 32-bit segment registers to code seg 
 - Initialize stack for kernel execution
-- Jump to kernel entry at 0x80000
+- Jump to stage2 entry at 0x80000
 
 ## Fail
 ```bash

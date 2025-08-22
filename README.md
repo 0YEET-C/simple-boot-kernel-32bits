@@ -3,6 +3,8 @@
 **MyOS** is a simple 32-bit kernel developed for learning and portfolio purposes.  
 It runs on x86 in **protected mode** and demonstrates basic OS concepts.
 
+# FOR FULL EXPLAIN IN DOC FILE
+
 ## OS Concepts Implemented
 - Bootloader
 - Interrupt Descriptor Table (IDT)
