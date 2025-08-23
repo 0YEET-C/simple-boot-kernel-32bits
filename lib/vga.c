@@ -13,29 +13,32 @@ void clear_screen() {
     col = 0;
 }
 
-void print(const char *str) {
-    volatile uint8_t *vga = (volatile uint8_t*)0xB8000;
+void print_char(char c) {
+    volatile uint16_t* vga = (volatile uint16_t*)0xB8000;
 
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '\n') {
-            row++;
-            col = 0;
-            if (row >= 25) clear_screen();
-            continue;
+    if (c == '\n') {
+        col = 0;
+        row++;
+    }else if(c == '\b') {
+        if(col > 0) {
+            col--;
+            vga[row*80+col] = (0x0F << 8) | ' ';
         }
-
-        int offset = row*80 + col;
-        vga[offset*2] = str[i];
-        vga[offset*2 + 1] = 0x07;
+    }else {
+        vga[row*80+col] = (0x0F << 8) | c;
         col++;
+    }
 
-        if (col >= 80) {
-            col = 0;
-            row++;
-            if (row >= 25) clear_screen();
-        }
+    if (col >= 80) {col = 0; row++;}
+    if (row >= 25) {row = 0; clear_screen();}
+}
+
+void print(const char* str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        print_char(str[i]);
     }
 }
+
 
 void itoa(int value, char* buffer) {
     char temp[12];

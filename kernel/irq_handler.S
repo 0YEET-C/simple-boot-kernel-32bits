@@ -1,5 +1,6 @@
 [bits 32]
 extern irq_handler
+extern keyboard_handler
 
 %macro IRQ 2
 global irq%1
@@ -34,8 +35,35 @@ irq%1:
     iretd
 %endmacro
 
+global irq1
+irq1:
+    cli
+    push dword 0
+    push dword 33
+    pusha
+    push ds
+    push es
+    push fs
+    push gs
+
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    call keyboard_handler
+
+    pop gs
+    pop fs
+    pop es
+    pop ds
+    popa
+
+    add esp, 8
+    iretd
+
 IRQ 0, 32
-IRQ 1, 33
 IRQ 2, 34
 IRQ 3, 35
 IRQ 4, 36

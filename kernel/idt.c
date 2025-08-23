@@ -32,5 +32,6 @@ void init_idt(void) {
     for (int q = 0; q < 16; q++) {
         set_idt_gate(32 + q, (uint32_t)irq_table[q], 0x08, 0x8E);
     }
+
     idt_flush((uint32_t)&idtp);
 }
