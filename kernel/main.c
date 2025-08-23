@@ -27,7 +27,7 @@ void kmain() {
     __asm__ volatile ("sti");
 
     stop_irq0();
-    
+
     while(1) {}
 }
 

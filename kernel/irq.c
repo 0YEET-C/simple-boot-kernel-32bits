@@ -45,13 +45,21 @@ unsigned char scancode_to_ascii[128] = {
     '*', 0,' ',
 };
 
+static int shift_pressed = 0;
+
 void keyboard_handler() {
     unsigned char scancode = inb(0x60);
+
+    if (scancode == 0x2A || scancode == 0x36) shift_pressed = 1;
+    if (scancode == 0xAA || scancode == 0xB6) shift_pressed = 0;
 
     if (!(scancode & 0x80) && scancode < 128) {
         char c = scancode_to_ascii[scancode];
 
         if (c) {
+            if (shift_pressed && c >= 'a' && c <= 'z') {
+                c = c - 'a' + 'A';
+            }
             print_char(c);
         }
     }

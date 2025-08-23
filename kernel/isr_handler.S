@@ -12,7 +12,7 @@ isr_table:
 global isr%1
 isr%1:
     cli
-    push dword 0 
+    push dword 0
     push dword %1
     pusha
     push ds
