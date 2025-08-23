@@ -179,4 +179,4 @@ typedef struct regs {
     uint32_t eip, cs, eflags, useresp, ss;   
 } regs_t;
 ```
-- collest information from push
+- collect information from push
