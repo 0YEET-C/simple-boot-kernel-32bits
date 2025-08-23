@@ -5,6 +5,11 @@ It runs on x86 in **protected mode** and demonstrates basic OS concepts.
 
 # FOR FULL EXPLAIN IN DOC FILE
 
+# Run with QEMU
+```bash
+qemu-system-i386 -drive format=raw,file=test.bin
+```
+
 ## OS Concepts Implemented
 - Bootloader
 - Interrupt Descriptor Table (IDT)
@@ -50,5 +55,3 @@ truncate -s 10240 stage2.bin
 cat stage1.bin stage2.bin > test.bin
 ```
 
-# Run with QEMU
-qemu-system-i386 -drive format=raw,file=test.bin
