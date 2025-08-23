@@ -14,8 +14,10 @@ It runs on x86 in **protected mode** and demonstrates basic OS concepts.
 
 ## Features
 - Clean and modular code
+- Thread
+- IPC
 - IRQ dispatcher
-- Memory allocator (in progress)
+- Memory allocator
 - System calls & User mode (planned)
 
 ## Toolchain & Compilation
@@ -46,6 +48,7 @@ truncate -s 10240 stage2.bin
 
 # Combine with bootloader into raw binary
 cat stage1.bin stage2.bin > test.bin
+```
 
 # Run with QEMU
 qemu-system-i386 -drive format=raw,file=test.bin
