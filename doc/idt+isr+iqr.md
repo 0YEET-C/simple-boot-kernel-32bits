@@ -60,21 +60,23 @@ idt_flush:
 - use lidt [eax] for load idt to ram
 - ret to return to c after loade idt
 
-# flow
-CPU → IDT → ISR → C handler → return
-
 # ISR 
 afer set gate idt finish
 
-## Set_gate_for_isr
+# FLOW
+CPU → IDT → ISR → C handler → return
+
+## Set Gate For ISR
 ```bash 
+extern uint32_t (*isr_table[32]);
+
 for (int v = 0; v < 32; v++) {
         set_idt_gate(v, (uint32_t)isr_table[v], 0x08, 0x8E);
     }
 ```
 - isr0-31 all 32
 - use isr_table in asm 
-### isr table
+### ISR Table
 ```bash 
 global isr_table
 
@@ -159,9 +161,9 @@ isr%1:
 ```
 - isr err 8, 10, 11, 12, 13, 14, 17 (Has Error Code)
 - isr noerr 0–7, 10–13, 16, , 18-32 (No Error Code)
-- 0x8E or type_attr choice
+- 0x8E or type_attr to choice err or noerr
 
-## ISR
+## ISR C Handler
 ```bash 
 void isr_handler(regs_t *r) {
     print("Interrupt: ");
@@ -170,7 +172,7 @@ void isr_handler(regs_t *r) {
 }
 ```
 - print Interrupt number
-### isr struct
+### ISR Struct
 ```bash 
 typedef struct regs {
     uint32_t gs, fs, es, ds; 
@@ -180,3 +182,82 @@ typedef struct regs {
 } regs_t;
 ```
 - collect information from push
+
+# IRQ
+
+# FLOW
+CPU → IDT → IRQ → C handler → return
+
+## Set Gate for IQR
+```bash
+extern uint32_t (*irq_table[16]);
+
+for (int q = 0; q < 16; q++) {
+        set_idt_gate(32 + q, (uint32_t)irq_table[q], 0x08, 0x8E);
+    }
+```
+### IQR_Table
+```bash
+global irq_table
+
+irq_table:
+    dd irq0, irq1, irq2, irq3, irq4, irq5, irq6, irq7
+    dd irq8, irq9, irq10, irq11, irq12, irq13, irq14, irq15
+```
+- irq0-15
+
+## IRQ Handler
+```bash
+%macro IRQ 2
+global irq%1
+irq%1:
+    cli
+    push dword 0
+    push dword %2
+    pusha
+    push ds
+    push es
+    push fs
+    push gs
+
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    push %2
+    call irq_handler
+    add esp, 4
+
+    pop gs
+    pop fs
+    pop es
+    pop ds
+    popa
+
+    add esp, 8
+    sti
+    iretd
+%endmacro
+```
+- push regis 
+- call iqr hadler
+
+## IQR C Handler
+```bash
+void irq_handler(uint32_t int_no) {
+    if (int_no != 32) {
+        print("IRQ: ");
+        print_int(int_no);
+        print("\n");
+    }
+
+    if (int_no >= 40) {
+        outb(0xA0, 0x20);
+    }
+    outb(0x20, 0x20);
+```
+- if != 32 because irq32 for timer
+- if int_no > 40 irq 8-15(40-47) to slave(0xA0) + master(0x20)
+- irq0-7(32-39) ot master(0x20)
