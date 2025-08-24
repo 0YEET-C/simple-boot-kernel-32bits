@@ -45,7 +45,7 @@ void init_idt(void) {
     idt_flush((uint32_t)&idtp);
 ```
 - idt_flush is idt loader in asm
-- limit -> sizof idt struct - 1
+- limit -> sizef idt struct - 1
 - base -> target
 ### idt_flush
 ```bash 

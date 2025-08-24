@@ -1,5 +1,5 @@
 # flow
-Real Mode → Enable A20 → Load Kernel → Setup GDT → Protected Mode → Jump to Stage2 → Call kernel
+Real Mode → Enable A20 → Load Stage2 → Setup GDT → Protected Mode → Jump to Stage2 → Call kernel
 
 # BOOT STSGE1
 - start at 16bits at 0x7c00
