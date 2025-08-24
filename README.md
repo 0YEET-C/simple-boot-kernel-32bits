@@ -1,14 +1,13 @@
 # MyOS
 
+<p align="center">
+  <img src="demo/keyboard_demo.gif" width="400"/>
+</p>
+
 **MyOS** is a simple 32-bit kernel developed for learning and portfolio purposes.  
 It runs on x86 in **protected mode** and demonstrates basic OS concepts.
 
 # FOR FULL EXPLAIN IN DOC FILE
-
-# Run with QEMU
-```bash
-qemu-system-i386 -drive format=raw,file=test.bin
-```
 
 ## OS Concepts Implemented
 - Bootloader
@@ -53,5 +52,17 @@ truncate -s 10240 stage2.bin
 
 # Combine with bootloader into raw binary
 cat stage1.bin stage2.bin > test.bin
+
+# Run with QEMU
+qemu-system-i386 -drive format=raw,file=test.bin
 ```
 
+### Timer & Keyboard Interrupt Demo
+This demo shows the basic IRQ handling in my OS kernel.  
+- Timer generates an interrupt every ~55ms.  
+- Keyboard IRQ captures keystrokes in real time.  
+
+### Preview
+Timer Demo             |  Keyboard Demo
+:---------------------:|:---------------------:
+![Timer](demo/timer_demo.gif) | ![Keyboard](demo/keyboard_demo.gif)
