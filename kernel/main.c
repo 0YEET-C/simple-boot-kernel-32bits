@@ -4,6 +4,7 @@
 #include "include/io.h"
 #include "include/pic.h"
 #include "include/irq.h"
+#include "include/gdt.h"
 
 
 void stop_irq0() {
@@ -20,13 +21,14 @@ void start_irq0() {
 
 void kmain() {
     clear_screen();
+    init_gdt();
     print("BOOT....\n");
     pic_remap(0x20, 0x28);
     init_idt();
     timer_init(100);
     __asm__ volatile ("sti");
 
-    stop_irq0();
+    // stop_irq0();
 
     while(1) {}
 }

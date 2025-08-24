@@ -8,11 +8,13 @@ all: clean
 	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/isr.c -o isr.o
 	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/pic.c -o pic.o
 	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/irq.c -o irq.o
+	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/gdt.c -o gdt.o
 	nasm -f elf32 kernel/idt_flush.S -o idt_flush.o
 	nasm -f elf32 kernel/isr_handler.S -o isr_handler.o
 	nasm -f elf32 kernel/irq_handler.S -o irq_handler.o
+	nasm -f elf32 kernel/gdt_flush.S -o gdt_flush.o
 
-	i686-elf-ld -T linker.ld -nostdlib -o stage2.elf stage2.o main.o vga.o idt.o idt_flush.o isr.o isr_handler.o irq.o irq_handler.o pic.o
+	i686-elf-ld -T linker.ld -nostdlib -o stage2.elf stage2.o main.o vga.o idt.o idt_flush.o isr.o isr_handler.o irq.o irq_handler.o pic.o gdt.o gdt_flush.o
 	i686-elf-objcopy -O binary stage2.elf stage2.bin
 	truncate -s 10240 stage2.bin
 
