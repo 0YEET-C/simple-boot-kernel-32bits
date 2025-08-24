@@ -1,8 +1,13 @@
 # MyOS
 
-<p align="center">
+<p align="left">
   <img src="demo/keyboard_demo.gif" width="400"/>
 </p>
+
+<p align="right">
+  <img src="demo/keyboard_demo.gif" width="400"/>
+</p>
+
 
 **MyOS** is a simple 32-bit kernel developed for learning and portfolio purposes.  
 It runs on x86 in **protected mode** and demonstrates basic OS concepts.
@@ -34,7 +39,6 @@ MyOS is **cross-compiled** from scratch using:
 All components are compiled manually, without relying on prebuilt kernels.
 
 ### Build Steps
-for full compiled in Makefile
 ```bash
 # Assemble bootloader
 nasm -f bin boot/stage1.nasm -o stage1.bin
