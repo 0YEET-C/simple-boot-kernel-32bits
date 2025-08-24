@@ -5,7 +5,7 @@
 </p>
 
 <p align="right">
-  <img src="demo/keyboard_demo.gif" width="400"/>
+  <img src="demo/timer_demo.gif" width="400"/>
 </p>
 
 
