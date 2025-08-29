@@ -1,27 +1,77 @@
-all: clean
-	nasm -f bin boot/stage1.nasm -o stage1.bin
-	nasm -f elf32 boot/stage2.nasm -o stage2.o
+AS = nasm
+GCC = i686-elf-gcc
+LD = i686-elf-ld
+OBJCOPY = i686-elf-objcopy
 
-	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/main.c -o main.o
-	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c lib/vga.c -o vga.o
-	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/idt.c -o idt.o
-	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/isr.c -o isr.o
-	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/pic.c -o pic.o
-	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/irq.c -o irq.o
-	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/gdt.c -o gdt.o
-	nasm -f elf32 kernel/idt_flush.S -o idt_flush.o
-	nasm -f elf32 kernel/isr_handler.S -o isr_handler.o
-	nasm -f elf32 kernel/irq_handler.S -o irq_handler.o
-	nasm -f elf32 kernel/gdt_flush.S -o gdt_flush.o
+ASFLAGS = -f elf32
+CSFLAGS = -I kernel/include -I lib/include -ffreestanding -m32 -O0 -Wall -Wextra
+LDFLAGS = -T linker.ld -nostdlib
 
-	i686-elf-ld -T linker.ld -nostdlib -o stage2.elf stage2.o main.o vga.o idt.o idt_flush.o isr.o isr_handler.o irq.o irq_handler.o pic.o gdt.o gdt_flush.o
-	i686-elf-objcopy -O binary stage2.elf stage2.bin
-	truncate -s 10240 stage2.bin
+BOOT_DIR = boot
+KERNEL_ASM_SRC = $(wildcard kernel/*.S)
+KERNEL_SRC = $(wildcard kernel/*.c)
+LIB_SRC = $(wildcard lib/*.c)
+KERNEL_ASM_OBJ = $(patsubst kernel/%.S, build/%.o, $(KERNEL_ASM_SRC))
+KERNEL_OBJ = $(patsubst kernel/%.c, build/%.o, $(KERNEL_SRC)) 
+LIB_OBJ = $(patsubst lib/%.c, build/%.o, $(LIB_SRC))
 
-	cat stage1.bin stage2.bin > test.bin
+STAGE1_BIN = build/stage1.bin
+STAGE2_O = build/stage2.o
+STAGE2_ELF = build/stage2.elf
+STAGE2_BIN = build/stage2.bin
+FINAL_IMAGE = test.bin
+
+all: $(FINAL_IMAGE)
+
+build:
+	mkdir -p build
+
+$(STAGE1_BIN): $(BOOT_DIR)/stage1.nasm | build
+	$(AS) -f bin $< -o $@
+
+$(STAGE2_O): $(BOOT_DIR)/stage2.nasm | build
+	$(AS) $(ASFLAGS) $< -o $@
+
+build/%.o: kernel/%.c | build
+	$(GCC) $(CSFLAGS) -c $< -o $@
+
+build/%.o: lib/%.c | build
+	$(GCC) $(CSFLAGS) -c $< -o $@
+
+build/%.o: kernel/%.S | build
+	$(AS) $(ASFLAGS) $< -o $@
+
+$(STAGE2_ELF): $(KERNEL_OBJ) $(STAGE2_O) $(LIB_OBJ) $(KERNEL_ASM_OBJ)
+	$(LD) $(LDFLAGS) -o $@ $(STAGE2_O) $(KERNEL_OBJ) $(LIB_OBJ) $(KERNEL_ASM_OBJ)
+
+$(STAGE2_BIN): $(STAGE2_ELF) 
+	$(OBJCOPY) -O binary $< $@
+	truncate -s 10240 $@
+
+$(FINAL_IMAGE): $(STAGE1_BIN) $(STAGE2_BIN)
+	cat $^ > $@
 
 run: all
 	qemu-system-i386 -drive format=raw,file=test.bin -serial stdio
-
+	
 clean:
-	rm -f *.bin *.o *.elf
+	rm -rf build $(FINAL_IMAGE)
+
+# 	i686-elf-gcc -I kernel/include -I lib/include -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/main.c -o main.o
+# 	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c lib/vga.c -o vga.o
+# 	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/idt.c -o idt.o
+# 	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/isr.c -o isr.o
+# 	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/pic.c -o pic.o
+# 	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/irq.c -o irq.o
+# 	i686-elf-gcc -ffreestanding -m32 -O0 -Wall -Wextra -c kernel/gdt.c -o gdt.o
+# 	nasm -f elf32 kernel/idt_flush.S -o idt_flush.o
+# 	nasm -f elf32 kernel/isr_handler.S -o isr_handler.o
+# 	nasm -f elf32 kernel/irq_handler.S -o irq_handler.o
+# 	nasm -f elf32 kernel/gdt_flush.S -o gdt_flush.o
+
+# 	i686-elf-ld -T linker.ld -nostdlib -o stage2.elf stage2.o main.o vga.o idt.o idt_flush.o isr.o isr_handler.o irq.o irq_handler.o pic.o gdt.o gdt_flush.o
+# 	i686-elf-objcopy -O binary stage2.elf stage2.bin
+# 	truncate -s 10240 stage2.bin
+
+# 	cat stage1.bin stage2.bin > test.bin
+

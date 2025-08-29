@@ -4,6 +4,7 @@ ENTRY(stage2_start)
 SECTIONS
 {
     . = 0x80000;
+    kernel_start = .;
 
     .text : {
         *(.text)
@@ -20,4 +21,6 @@ SECTIONS
     .bss : {
         *(.bss COMMON)
     }
+
+    kernel_end = .;
 }
