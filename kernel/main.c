@@ -6,7 +6,7 @@
 #include "irq.h"
 #include "gdt.h"
 #include "pmm.h"
-
+#include "string.h"
 
 void stop_irq0() {
     uint8_t mask = inb(0x21);
@@ -32,25 +32,16 @@ void kmain() {
 
     stop_irq0();
 
-    uint32_t addr1 = alloc_page();
-    print("alloc_page() = ");
-    print_int(addr1);
+    int* arr = (int*)kmalloc(5 * sizeof(int));
+    for(int i=0;i<5;i++) arr[i] = i*10;
+
+    print("array = ");
+    for(int i=0;i<5;i++) {
+        print_int(arr[i]);
+        print(" ");
+    }
     print("\n");
 
-    uint32_t addr2 = alloc_page();
-    print("alloc_page() = ");
-    print_int(addr2);
-    print("\n");
-
-    free_page(addr1);
-    print("free_page = ");
-    print_int(addr1);
-    print("\n");
-
-    uint32_t addr3 = alloc_page();
-    print("alloc_page() = ");
-    print_int(addr3);
-    print("\n");
 
     while(1) {}
 }
