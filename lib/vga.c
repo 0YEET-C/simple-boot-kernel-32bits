@@ -39,6 +39,16 @@ void print(const char* str) {
     }
 }
 
+static const char hex_digits[] = "0123456789ABCDEF";
+
+void print_hex(uint32_t value) {
+    print("0x");
+
+    for (int i = 28; i >= 0; i -= 4) {
+        uint8_t nibble = (value >> i) & 0xF;
+        print_char(hex_digits[nibble]);
+    }
+}
 
 void itoa(int value, char* buffer) {
     char temp[12];

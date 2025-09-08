@@ -8,8 +8,7 @@ static uint8_t* heap_end = (uint8_t*)KERNEL_HEAP_START;
 
 void *kmalloc(uint32_t size) {
     size = (size + 3) & ~3;
-    if ((uint32_t)(heap_end + size) > KERNEL_HEAP_MAX)
-        return 0;
+    if ((uint32_t)(heap_end + size) > KERNEL_HEAP_MAX) return 0;
     void* ptr = heap_end;
     heap_end += size;
     return ptr;

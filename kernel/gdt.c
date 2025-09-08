@@ -1,4 +1,5 @@
 #include "gdt.h"
+#include "vga.h"
 #include "string.h"
 #include <stdint.h>
 
@@ -53,5 +54,6 @@ void init_gdt(void) {
     :
     :
     : "ax"
+
 );
 }

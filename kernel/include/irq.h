@@ -9,5 +9,7 @@ typedef struct regs {
     uint32_t eip, cs, eflags, useresp, ss;   
 } regs_t;
 
-void timer_init(uint32_t frequency);
+void stop_irq0();
+void start_irq0();
+void timer_init();
 #endif

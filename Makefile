@@ -1,10 +1,10 @@
-AS = nasm
+AS = nasm 
 GCC = i686-elf-gcc
 LD = i686-elf-ld
 OBJCOPY = i686-elf-objcopy
 
 ASFLAGS = -f elf32
-CSFLAGS = -I kernel/include -I lib/include -ffreestanding -m32 -O0 -Wall -Wextra
+CSFLAGS = -I kernel/include -I lib/include -ffreestanding -g -m32 -O0 -Wall -Wextra
 LDFLAGS = -T linker.ld -nostdlib
 
 BOOT_DIR = boot
@@ -19,6 +19,7 @@ STAGE1_BIN = build/stage1.bin
 STAGE2_O = build/stage2.o
 STAGE2_ELF = build/stage2.elf
 STAGE2_BIN = build/stage2.bin
+USER_BIN = build/user.bin
 FINAL_IMAGE = test.bin
 
 all: clean $(FINAL_IMAGE) 
@@ -27,7 +28,7 @@ build:
 	mkdir -p build
 
 $(STAGE1_BIN): $(BOOT_DIR)/stage1.nasm | build
-	$(AS) -f bin $< -o $@
+	$(AS) -f bin -g $< -o $@
 
 $(STAGE2_O): $(BOOT_DIR)/stage2.nasm | build
 	$(AS) $(ASFLAGS) $< -o $@
@@ -40,6 +41,9 @@ build/%.o: lib/%.c | build
 
 build/%.o: kernel/%.S | build
 	$(AS) $(ASFLAGS) $< -o $@
+
+build/%.o: user/%.c | build
+	$(GCC) $(CSFLAGS_USER) -c $< -o $@
 
 $(STAGE2_ELF): $(KERNEL_OBJ) $(STAGE2_O) $(LIB_OBJ) $(KERNEL_ASM_OBJ)
 	$(LD) $(LDFLAGS) -o $@ $(STAGE2_O) $(KERNEL_OBJ) $(LIB_OBJ) $(KERNEL_ASM_OBJ)

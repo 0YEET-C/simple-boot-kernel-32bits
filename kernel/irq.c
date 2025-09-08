@@ -1,33 +1,14 @@
-#include "include/irq.h"
-#include "../lib/include/vga.h"
-#include "include/io.h"
+#include "irq.h"
+#include "vga.h"
+#include "io.h"
+#include "thread.h"
 
-static uint32_t timer_frequency = 18;
-
-void irq_handler(uint32_t int_no) {
-    if (int_no == 32) {
-        static uint32_t ticks = 0;
-        ticks++;
-
-        if(ticks % timer_frequency == 0) {
-            print("1 second passed\n");
-        }
-    }
-
-    if (int_no != 32) {
-        print("IRQ: ");
-        print_int(int_no);
-        print("\n");
-    }
-
-    if (int_no >= 40) {
-        outb(0xA0, 0x20);
-    }
+void irq0_handler() {
     outb(0x20, 0x20);
 }
 
-void timer_init(uint32_t frequency) {
-    timer_frequency = frequency;
+void timer_init() {
+    uint32_t frequency = 100;
 
     uint32_t divisor = 1193180 / frequency;
 
@@ -36,6 +17,28 @@ void timer_init(uint32_t frequency) {
     outb(0x40, divisor >> 8);
 }
 
+void stop_irq0() {
+    uint8_t mask = inb(0x21);
+    mask |= 1 << 0;
+    outb(0x21, mask);
+}
+
+void start_irq0() {
+    uint8_t mask = inb(0x21); 
+    mask &= ~(1 << 0);
+    outb(0x21, mask);
+}
+
+void irq_handler(uint32_t int_no) {
+    print("IRQ: ");
+    print_int(int_no);
+    print("\n");
+
+    if (int_no >= 40) {
+        outb(0xA0, 0x20);
+    }
+    outb(0x20, 0x20);
+}
 
 unsigned char scancode_to_ascii[128] = {
     0,  27, '1','2','3','4','5','6','7','8','9','0','-','=', '\b',

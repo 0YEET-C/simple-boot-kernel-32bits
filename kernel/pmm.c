@@ -1,8 +1,9 @@
 #include "pmm.h"
 #include "string.h"
+
 #define PAGE_SIZE 4096
 
-#define TOTAL_MEMORY (16*1024*1024)
+#define TOTAL_MEMORY (32*1024*1024)
 #define TOTAL_PAGE (TOTAL_MEMORY / PAGE_SIZE)
 #define BITMAP_SIZE (TOTAL_PAGE / 8)
 
@@ -20,10 +21,13 @@ int is_page_free(uint32_t page) {
     return !(memory_bitmap[page/8] & (1 << (page % 8)));
 }
 
+static uint32_t next_free_page = 0;
+
 uint32_t alloc_page() {
-    for (uint32_t i = 0; i < TOTAL_PAGE; i++) {
+    for (uint32_t i = next_free_page; i < TOTAL_PAGE; i++) {
         if (is_page_free(i)) {
             set_page_used(i);
+            next_free_page = i + 1;
             return i*PAGE_SIZE;      
         }
     }
@@ -52,4 +56,22 @@ void init_pmm() {
     for (uint32_t i = start_page; i < end_page; i++) {
         set_page_used(i);
     }
+
+    uint32_t stack_start = 0x200000;
+    uint32_t stack_end = 0x300000;
+    uint32_t stack_page_start = stack_start/PAGE_SIZE;
+    uint32_t stack_page_end = stack_end/PAGE_SIZE;
+    for (uint32_t i = stack_page_start; i < stack_page_end; i++) {
+        set_page_used(i);
+    }
+
+    uint32_t heap_start = 0x300000;
+    uint32_t heap_end = 0x700000;
+    uint32_t heap_page_start = heap_start/PAGE_SIZE;
+    uint32_t heap_page_end = heap_end/PAGE_SIZE;
+    for (uint32_t i = heap_page_start; i < heap_page_end; i++) {
+        set_page_used(i);
+    }
+
+    next_free_page = end_page;
 }
