@@ -6,20 +6,10 @@ start:
     mov es,ax
     mov ds,ax
 
+    mov [boot_drive], dl
+
     call ea_A20
-
-    mov ax,0x8000
-    mov es,ax
-    xor bx,bx
-
-    mov ah,0x02
-    mov al,20
-    mov ch,0
-    mov cl,2
-    mov dh,0
-    mov dl,0x80
-    int 0x13
-    jc fail
+    call load_stage2
 
     lgdt [gdt_des]
 
@@ -49,6 +39,38 @@ gdt_des:
     dw gdt_end - gdt_start - 1
     dd gdt_start
 
+load_stage2:
+    mov dl, [boot_drive]
+    lea si, [dap_stage2]
+    mov ah, 0x42
+    int 0x13
+    jc fail
+    ret
+
+dap_stage2:
+    db 0x10
+    db 0
+    dw 20
+    dw 0
+    dw 0x8000
+    dq 1
+
+load_kernel:
+    mov dl, [boot_drive]
+    lea si, [dap_kernel]
+    mov ah, 0x42
+    int 0x13
+    jc fail
+    ret
+
+dap_kernel:
+    db 0x10
+    db 0
+    dw 20
+    dw 0
+    dw 0x9000
+    dq 22
+
 [bits 32]
 pm_mode_start:
     mov ax,0x10
@@ -57,9 +79,11 @@ pm_mode_start:
     mov fs,ax
     mov gs,ax
     mov ss,ax
-    mov esp,0x9FF00
-
+    mov esp,0x9FF00 
+    
     jmp 0x08:0x80000
+
+boot_drive: db 0
 
 times 510 - ($ - $$) db 0
 dw 0xAA55

@@ -1,21 +1,21 @@
 #include <stdint.h>
 #include "include/vga.h"
 
+#define VGA_WIDTH 80
+#define VGA_HIGHT 25
+
+volatile uint16_t *vga = (volatile uint16_t*)0xc00b8000;
 static int row = 0, col = 0;
 
 void clear_screen() {
-    volatile uint8_t *vga = (volatile uint8_t*)0xb8000;
-    for (int i = 0; i < 80*25; i++) {
-        vga[i*2] = ' ';
-        vga[i*2+1] = 0x07;
+    for (int i = 0; i < VGA_WIDTH*VGA_HIGHT; i++) {
+        vga[i] = (0x07 << 8) | ' ';
     }
     row = 0;
     col = 0;
 }
 
 void print_char(char c) {
-    volatile uint16_t* vga = (volatile uint16_t*)0xB8000;
-
     if (c == '\n') {
         col = 0;
         row++;
