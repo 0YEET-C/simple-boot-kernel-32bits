@@ -1,9 +1,9 @@
-#include "irq.h"
-#include "vga.h"
-#include "io.h"
-#include "thread.h"
+#include "include/irq.h"
+#include "include/vga.h"
+#include "include/io.h"
 
 void irq0_handler() {
+    print("0");
     outb(0x20, 0x20);
 }
 

@@ -1,33 +1,25 @@
-[org 0x7c00]
 [bits 16]
+[org 0x7c00]
 start:
-    cli
+    cli 
     xor ax,ax
-    mov es,ax
     mov ds,ax
+    mov es,ax
 
     mov [boot_drive], dl
 
     call ea_A20
     call load_stage2
+    call load_kernel
 
     lgdt [gdt_des]
-
+    
+    cli
     mov eax,cr0
     or eax,1
     mov cr0,eax
-
+    
     jmp 0x08:pm_mode_start
-
-fail:
-    hlt
-    jmp $
-
-ea_A20:
-    in al,0x92
-    or al,2
-    out 0x92,al
-    ret
 
 gdt_start:
     dq 0x0000000000000000
@@ -38,6 +30,12 @@ gdt_end:
 gdt_des:
     dw gdt_end - gdt_start - 1
     dd gdt_start
+
+ea_A20:
+    in al,0x92
+    or al,2
+    out 0x92,al
+    ret
 
 load_stage2:
     mov dl, [boot_drive]
@@ -50,7 +48,7 @@ load_stage2:
 dap_stage2:
     db 0x10
     db 0
-    dw 20
+    dw 5
     dw 0
     dw 0x8000
     dq 1
@@ -67,20 +65,29 @@ dap_kernel:
     db 0x10
     db 0
     dw 20
-    dw 0
-    dw 0x9000
-    dq 22
+    dw 0  
+    dw 0x9000 
+    dq 6
+
+fail:
+    hlt
+    jmp $
 
 [bits 32]
 pm_mode_start:
     mov ax,0x10
-    mov es,ax
     mov ds,ax
-    mov fs,ax
+    mov es,ax
     mov gs,ax
+    mov fs,ax
     mov ss,ax
-    mov esp,0x9FF00 
-    
+    mov esp,0x200000
+
+    mov esi, 0x90000
+    mov edi, 0x100000
+    mov ecx, (20*512) / 4
+    rep movsd
+
     jmp 0x08:0x80000
 
 boot_drive: db 0

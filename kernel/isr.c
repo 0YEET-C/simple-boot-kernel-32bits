@@ -1,5 +1,5 @@
-#include "../lib/include/vga.h"
 #include "include/isr.h"
+#include "include/vga.h"
 
 void isr_handler(regs_t *r) {
     if (r->int_no == 0) {
