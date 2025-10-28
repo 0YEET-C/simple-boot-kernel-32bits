@@ -5,6 +5,8 @@
 #include "include/pic.h"
 #include "include/irq.h"
 #include "include/gdt.h"
+#include "include/shell.h"
+#include "include/keyboard.h"
 
 void kmain() {
     clear_screen();
@@ -16,8 +18,8 @@ void kmain() {
     timer_init();
     __asm__ volatile ("sti");
 
-    // print("SETUP....\n");
-
+    print("SETUP....\n");
+    shell();
     while(1) {}
 }
 
