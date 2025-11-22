@@ -62,6 +62,6 @@ Timer Demo             |  Keyboard Demo
 :---------------------:|:---------------------:
 ![Timer](demo/timer_demo.gif) | ![Keyboard](demo/keyboard_demo.gif)
 
-Timer Demo             |
+Shell Demo             |
 :---------------------:|
 ![Shell](demo/shell.gif)
