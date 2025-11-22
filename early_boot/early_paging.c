@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "include/paging.h"
+#include "include/early_paging.h"
 
 #define PAGE_SIZE 4096
 #define PAGE_ENTRIES 1024
@@ -7,7 +7,7 @@
 #define KERNEL_BASE 0xC0000000
 #define KERNEL_PHYS 0x00100000
 
-#define STACK_TOP 0xC0700000
+#define STACK_TOP 0xC0600000
 #define STACK_SIZE 0x4000
 
 #define VGA_BASE 0xC00B8000
@@ -36,7 +36,7 @@ void init_paging() {
     page_dir[(STACK_TOP >> 22)] = ((uint32_t)high_stack_table) | PAGE_PRESENT | PAGE_RW;
 
     for (int i = 0; i < STACK_SIZE / PAGE_SIZE; i++) {
-        high_stack_table[((STACK_TOP - STACK_SIZE + i*PAGE_SIZE) >> 12) & 0x3FF] = (0x700000 + i*PAGE_SIZE) | PAGE_PRESENT | PAGE_RW;
+        high_stack_table[((STACK_TOP - STACK_SIZE + i*PAGE_SIZE) >> 12) & 0x3FF] = (0x600000 + i*PAGE_SIZE) | PAGE_PRESENT | PAGE_RW;
     }
 
     high_table[(VGA_BASE >> 12) & 0x3FF] = (VGA_PHYS & 0xFFFFF000) | PAGE_PRESENT | PAGE_RW;

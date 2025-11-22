@@ -4,7 +4,7 @@
 #include "include/vga.h"
 #include "include/shell.h"
 
-keyboard_buffer_t kbd_buffer = {0};
+keyboard_buffer kbd_buffer = {0};
 
 static unsigned char scancode_to_ascii[128] = {
     0, 27, '1','2','3','4','5','6','7','8','9','0','-','=', '\b',

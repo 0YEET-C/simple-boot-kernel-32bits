@@ -1,10 +1,11 @@
 {
     "files.associations": {
-        "pic.h": "c",
-        "io.h": "c",
-        "keyboard.h": "c",
-        "stdint.h": "c",
+        "early_paging.h": "c",
+        "paging.h": "c",
+        "shell.h": "c",
         "vga.h": "c",
-        "stddef.h": "c"
+        "keyboard.h": "c",
+        "string.h": "c",
+        "io.h": "c"
     }
 }

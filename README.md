@@ -1,14 +1,5 @@
 # MyOS
 
-<p align="left">
-  <img src="demo/keyboard_demo.gif" width="400"/>
-</p>
-
-<p align="right">
-  <img src="demo/timer_demo.gif" width="400"/>
-</p>
-
-
 **MyOS** is a simple 32-bit kernel developed for learning and portfolio purposes.  
 It runs on x86 in **protected mode** and demonstrates basic OS concepts.
 
@@ -70,3 +61,7 @@ This demo shows the basic IRQ handling in my OS kernel.
 Timer Demo             |  Keyboard Demo
 :---------------------:|:---------------------:
 ![Timer](demo/timer_demo.gif) | ![Keyboard](demo/keyboard_demo.gif)
+
+Timer Demo             |
+:---------------------:|
+![Shell](demo/shell.gif)

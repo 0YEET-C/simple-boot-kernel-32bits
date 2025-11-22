@@ -9,9 +9,7 @@ typedef struct {
     char buffer[KEYBOARD_BUFFER_SIZE];
     uint8_t head;
     uint8_t tail;
-} keyboard_buffer_t;
-
-extern keyboard_buffer_t kbd_buffer;
+} keyboard_buffer;
 
 void keyboard_buffer_push(char c);
 char keyboard_buffer_pop(void);

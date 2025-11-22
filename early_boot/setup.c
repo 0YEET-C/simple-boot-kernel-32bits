@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "include/paging.h"
+#include "include/early_paging.h"
 
 extern void entry();
 

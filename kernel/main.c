@@ -7,10 +7,12 @@
 #include "include/gdt.h"
 #include "include/shell.h"
 #include "include/keyboard.h"
+#include "include/pmm.h"
+#include "include/paging.h"
 
 void kmain() {
     clear_screen();
-
+    init_pmm();
     init_gdt();
     init_idt();
     pic_remap(0x20, 0x28);

@@ -5,6 +5,5 @@
 #define PAGE_RW 0x2
 #define PAGE_USER 0x4
 
-void clear_buffer();
 void init_paging();
 #endif
