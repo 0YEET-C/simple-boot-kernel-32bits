@@ -1,26 +1,38 @@
-OUTPUT_FORMAT("elf32-i386")
-ENTRY(setup)
+KERNEL_VIRT_BASE = 0xC0000000;
+KERNEL_PHYS_BASE = 0x00100000;
+PHYS_PAGE_TABLES = 0x00700000;
+
+PHDRS {
+    text PT_LOAD FLAGS(0x5);
+    data PT_LOAD FLAGS(0x6);
+}
 
 SECTIONS
-{
-    . = 0x80000;
+{   
+    . = KERNEL_VIRT_BASE;
+
     kernel_start = .;
 
-    .text : {
-        *(.text)
-    }
+    .text : AT(ADDR(.text) - KERNEL_VIRT_BASE + KERNEL_PHYS_BASE)
+    {
+        *(.text*)
+    } :text
 
-    .rodata : {
+    .rodata : AT(ADDR(.rodata) - KERNEL_VIRT_BASE+ KERNEL_PHYS_BASE)
+    {
         *(.rodata*)
-    }
+    } :text
 
-    .data : {
-        *(.data)
-    }
+    .data : AT(ADDR(.data) - KERNEL_VIRT_BASE+ KERNEL_PHYS_BASE)
+    {
+        *(.data*)
+    } :data
 
-    .bss : {
-        *(.bss COMMON)
-    }
-
+    .bss : AT(ADDR(.bss) - KERNEL_VIRT_BASE+ KERNEL_PHYS_BASE)
+    {
+        *(.bss*)
+        *(COMMON)
+    } :data
+    
     kernel_end = .;
 }

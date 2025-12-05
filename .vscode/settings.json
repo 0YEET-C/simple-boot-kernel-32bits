@@ -6,6 +6,10 @@
         "vga.h": "c",
         "keyboard.h": "c",
         "string.h": "c",
-        "io.h": "c"
+        "io.h": "c",
+        "pmm.h": "c",
+        "irq.h": "c",
+        "gdt.h": "c",
+        "pic.h": "c"
     }
 }

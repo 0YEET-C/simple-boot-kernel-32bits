@@ -11,6 +11,7 @@
 #include "include/paging.h"
 
 void kmain() {
+    init_paging();
     clear_screen();
     init_pmm();
     init_gdt();
